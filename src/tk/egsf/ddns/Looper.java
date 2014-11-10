@@ -25,7 +25,7 @@ public class Looper implements Runnable {
     public void run() {
         while (true) {
             try {
-                String getipjson = JSON_helper.getJsonUrl("https://ddns.egsf.tk/webservice/getip", this.j.ddns.getBasicAuth());
+                String getipjson = JSON_helper.getJsonUrl("https://ddns.egsf.tk/webservice/getip");
 
                 JSONObject js = new JSONObject(getipjson);
 
