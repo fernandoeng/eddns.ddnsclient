@@ -5,25 +5,9 @@
  */
 package tk.egsf.ddns;
 
-import com.sun.org.apache.xerces.internal.impl.dv.util.Base64;
-import java.io.BufferedReader;
-import java.io.IOException;
-import java.io.InputStreamReader;
-import java.net.MalformedURLException;
-import java.net.URL;
-import java.security.KeyManagementException;
-import java.security.NoSuchAlgorithmException;
-import java.security.cert.X509Certificate;
 import java.util.ArrayList;
 import java.util.List;
-import java.util.logging.Level;
-import java.util.logging.Logger;
-import javax.net.ssl.HttpsURLConnection;
-import javax.net.ssl.SSLContext;
-import javax.net.ssl.TrustManager;
-import javax.net.ssl.X509TrustManager;
 import javax.swing.table.DefaultTableModel;
-import javax.swing.table.TableModel;
 import org.json.JSONArray;
 import org.json.JSONObject;
 
@@ -191,9 +175,20 @@ public class janela extends javax.swing.JFrame {
 
         String gethostsjson = JSON_helper.getJsonUrl(https_url, ddns.getBasicAuth());
 
+        if (gethostsjson == "") {
+            return;
+        }
+
         JSONArray jsa = new JSONArray(gethostsjson);
 
         DefaultTableModel model = (DefaultTableModel) jTable1.getModel();
+
+        List<Boolean> selected = new ArrayList<Boolean>();
+
+        int rowcount = jTable1.getRowCount();
+        for (int i = 0; i < rowcount; i++) {
+            selected.add((Boolean) jTable1.getValueAt(i, 2));
+        }
 
         model.setNumRows(0);
 
@@ -201,15 +196,23 @@ public class janela extends javax.swing.JFrame {
             for (int i = 0; i < jsa.length(); i++) {
                 System.out.println(jsa.get(i));
 
-                JSONObject js = jsa.getJSONObject(i);;
+                JSONObject js = jsa.getJSONObject(i);
                 Object[] row = new Object[]{js.getString("host"), js.getString("ip")};
                 model.addRow(row);
 
             }
+
+            model.fireTableDataChanged();
+
+            for (int i = 0; i < selected.size(); i++) {
+                Boolean boolean1 = selected.get(i);
+
+                jTable1.setValueAt(boolean1, i, 2);
+            }
+
         } catch (Exception e) {
             System.out.println("Erro: " + e.getMessage());
         }
-        model.fireTableDataChanged();
 
     }//GEN-LAST:event_JBatualizalistaActionPerformed
 
