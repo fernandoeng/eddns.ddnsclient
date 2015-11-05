@@ -52,7 +52,7 @@ public class login extends javax.swing.JFrame {
         JLErro = new javax.swing.JLabel();
 
         setDefaultCloseOperation(javax.swing.WindowConstants.EXIT_ON_CLOSE);
-        setTitle("CISS Process Notify");
+        setTitle("Engelsoft DDNS");
         setResizable(false);
 
         jLabel1.setHorizontalAlignment(javax.swing.SwingConstants.CENTER);
@@ -154,7 +154,7 @@ public class login extends javax.swing.JFrame {
         
         JSONObject js = new JSONObject(dologinjson);
         
-        if (js.getInt("loged") == 1) {
+        if (js.getInt("logged") == 1) {
             this.ddns.setBasicAuth(basicAuth);
             this.ddns.getJ().setUserName(js.getString("username"));
             this.ddns.getJ().setLogin(js.getString("login"));

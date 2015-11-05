@@ -206,7 +206,7 @@ public class JSON_helper {
         } catch (MalformedURLException e) {
             e.printStackTrace();
         } catch (IOException e) {
-            e.printStackTrace();
+//            e.printStackTrace();
         } catch (NoSuchAlgorithmException ex) {
             Logger.getLogger(login.class.getName()).log(Level.SEVERE, null, ex);
         } catch (KeyManagementException ex) {

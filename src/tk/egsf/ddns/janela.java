@@ -52,6 +52,7 @@ public class janela extends javax.swing.JFrame {
         jLabel2 = new javax.swing.JLabel();
         jButton1 = new javax.swing.JButton();
         jLabel4 = new javax.swing.JLabel();
+        jTextField1 = new javax.swing.JTextField();
 
         setDefaultCloseOperation(javax.swing.WindowConstants.EXIT_ON_CLOSE);
 
@@ -113,33 +114,39 @@ public class janela extends javax.swing.JFrame {
             }
         });
 
+        jTextField1.setText("0.0.0.0");
+        jTextField1.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                jTextField1ActionPerformed(evt);
+            }
+        });
+
         javax.swing.GroupLayout layout = new javax.swing.GroupLayout(getContentPane());
         getContentPane().setLayout(layout);
         layout.setHorizontalGroup(
             layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addComponent(jScrollPane1, javax.swing.GroupLayout.PREFERRED_SIZE, 0, Short.MAX_VALUE)
+            .addComponent(jScrollPane1, javax.swing.GroupLayout.DEFAULT_SIZE, 400, Short.MAX_VALUE)
             .addGroup(layout.createSequentialGroup()
                 .addContainerGap()
                 .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
                     .addGroup(layout.createSequentialGroup()
-                        .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                            .addGroup(layout.createSequentialGroup()
-                                .addComponent(jLabel1)
-                                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                                .addComponent(JLusername, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-                                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
-                                .addComponent(jLabel3)
-                                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED))
-                            .addGroup(layout.createSequentialGroup()
-                                .addComponent(JBatualizalista)
-                                .addGap(149, 149, 149)))
-                        .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                            .addComponent(jLabel2, javax.swing.GroupLayout.DEFAULT_SIZE, 132, Short.MAX_VALUE)
-                            .addComponent(JLlogin, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)))
+                        .addComponent(jLabel1)
+                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                        .addComponent(JLusername, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
+                        .addComponent(jLabel3)
+                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                        .addComponent(JLlogin, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
                     .addGroup(layout.createSequentialGroup()
                         .addComponent(jButton1)
                         .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                        .addComponent(jLabel4, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)))
+                        .addComponent(jLabel4, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
+                    .addGroup(layout.createSequentialGroup()
+                        .addComponent(JBatualizalista)
+                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                        .addComponent(jTextField1)
+                        .addGap(18, 18, 18)
+                        .addComponent(jLabel2, javax.swing.GroupLayout.PREFERRED_SIZE, 123, javax.swing.GroupLayout.PREFERRED_SIZE)))
                 .addContainerGap())
         );
         layout.setVerticalGroup(
@@ -154,7 +161,8 @@ public class janela extends javax.swing.JFrame {
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, 8, Short.MAX_VALUE)
                 .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
                     .addComponent(JBatualizalista)
-                    .addComponent(jLabel2))
+                    .addComponent(jLabel2)
+                    .addComponent(jTextField1, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
                 .addComponent(jScrollPane1, javax.swing.GroupLayout.PREFERRED_SIZE, 273, javax.swing.GroupLayout.PREFERRED_SIZE)
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
@@ -197,7 +205,7 @@ public class janela extends javax.swing.JFrame {
                 System.out.println(jsa.get(i));
 
                 JSONObject js = jsa.getJSONObject(i);
-                Object[] row = new Object[]{js.getString("host"), js.getString("ip")};
+                Object[] row = new Object[]{js.getString("host")+"."+js.getString("zone"), js.getString("ip")};
                 model.addRow(row);
 
             }
@@ -224,6 +232,7 @@ public class janela extends javax.swing.JFrame {
         String ip = js.getString("ip");
 
         jLabel2.setText(ip);
+        jTextField1.setText(ip);
 
     }//GEN-LAST:event_jLabel2MouseClicked
 
@@ -231,7 +240,8 @@ public class janela extends javax.swing.JFrame {
         int numlinhas = jTable1.getModel().getRowCount();
 
         JSONObject jo = new JSONObject();
-        jo.put("ip", jLabel2.getText());
+//        jo.put("ip", jLabel2.getText());
+        jo.put("ip", jTextField1.getText());
 
         DefaultTableModel modtable = (DefaultTableModel) jTable1.getModel();
 
@@ -250,17 +260,26 @@ public class janela extends javax.swing.JFrame {
 
             jo.put("hosts", lista);
 
-            String resposta = JSON_helper.postToUrl("https://ddns.egsf.tk/webservice/dohostupdate", ddns.getBasicAuth(), jo);
+            try {
+                String resposta = JSON_helper.postToUrl("https://ddns.egsf.tk/webservice/dohostupdate", ddns.getBasicAuth(), jo);
 
-            JSONObject jres = new JSONObject(resposta);
-            if (jres.getInt("updated") == 1) {
-                atualizarTabela();
-                jLabel4.setText(jres.getString("msg"));
-            } else {
-                jLabel4.setText(jres.getString("msg"));
+                JSONObject jres = new JSONObject(resposta);
+
+                if (jres.getInt("updated") == 1) {
+                    atualizarTabela();
+                    jLabel4.setText(jres.getString("msg"));
+                } else {
+                    jLabel4.setText(jres.getString("msg"));
+                }
+            } catch (Exception e) {
+                System.out.println("error");
             }
         }
     }//GEN-LAST:event_jButton1ActionPerformed
+
+    private void jTextField1ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jTextField1ActionPerformed
+        // TODO add your handling code here:
+    }//GEN-LAST:event_jTextField1ActionPerformed
 
     /**
      * @param args the command line arguments
@@ -308,6 +327,7 @@ public class janela extends javax.swing.JFrame {
     public void setip(String ip) {
         if (!jLabel2.getText().equals(ip)) {
             jLabel2.setText(ip);
+            jTextField1.setText(ip);
             jButton1ActionPerformed(null);
         }
     }
@@ -329,6 +349,7 @@ public class janela extends javax.swing.JFrame {
     private javax.swing.JLabel jLabel4;
     private javax.swing.JScrollPane jScrollPane1;
     private javax.swing.JTable jTable1;
+    private javax.swing.JTextField jTextField1;
     // End of variables declaration//GEN-END:variables
 
     public void setUserName(String UserName) {
